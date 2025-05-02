@@ -1,0 +1,8 @@
+Telethon
+cachebox
+sqlalchemy[asyncio]
+aiomysql
+cryptography
+uvloop; sys_platform != "windows"
+cryptg
+msgspec[yaml]

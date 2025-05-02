@@ -1,0 +1,7 @@
+texts:
+  welcome: |-
+    Hello, I'm a bot.
+
+buttons:
+  start:
+    support: Support
