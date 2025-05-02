@@ -1,0 +1,22 @@
+# Your bot TOKEN
+token: TOKEN
+
+# Telegram API ID & hash
+api_id: 123456789
+api_hash: HASH
+
+# admin user IDs
+admins:
+  - 123456789
+  - 987654321
+
+# database settings
+database:
+  host: localhost
+  port: 3306
+  user: username
+  password: passwd
+  name: loversbot
+
+# bot support username ( must starts with https://t.me/ )
+support: https://t.me/awolverp
