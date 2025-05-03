@@ -12,11 +12,20 @@ admins:
 
 # database settings
 database:
-  host: localhost
-  port: 3306
-  user: username
-  password: passwd
+  # acceptable types are 'sqlite3' and 'mysql'
+  type: sqlite3
   name: loversbot
+
+  # These are only required for mysql 
+  # host: localhost
+  # port: 3306
+  # user: root
+  # password: Apple.ali.p1384
+
+# the bot's groups which bot have to manage
+# other groups cannot use this bot
+groups:
+  - -100123456789
 
 # bot support username ( must starts with https://t.me/ )
 support: https://t.me/awolverp

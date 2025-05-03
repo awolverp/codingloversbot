@@ -2,6 +2,7 @@ Telethon
 cachebox
 sqlalchemy[asyncio]
 aiomysql
+aiosqlite
 cryptography
 uvloop; sys_platform != "windows"
 cryptg

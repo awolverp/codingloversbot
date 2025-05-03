@@ -79,7 +79,7 @@ class Participant(Model):
     - group_id
     """
 
-    _tablename__ = "participants"
+    __tablename__ = "participants"
 
     id: Mapped[int] = mapped_column(sqltypes.BigInteger, primary_key=True)
     is_trusted: Mapped[bool] = mapped_column(sqltypes.Boolean, nullable=False)
@@ -92,15 +92,23 @@ class Participant(Model):
     group_id: Mapped[int] = mapped_column(sqltypes.BigInteger, nullable=False)
 
 
-_engine = create_async_engine(
-    "mysql+aiomysql://{}:{}@{}:{}/{}".format(
-        env.MYSQL_USER,
-        env.MYSQL_PASSWORD,
-        env.MYSQL_HOST,
-        env.MYSQL_PORT,
-        env.MYSQL_DATABASE,
-    ),
-)
+if env.DATABASE["type"] == "mysql":
+    _engine = create_async_engine(
+        "mysql+aiomysql://{}:{}@{}:{}/{}".format(
+            env.DATABASE["user"],
+            env.DATABASE["password"],
+            env.DATABASE["host"],
+            env.DATABASE["port"],
+            env.DATABASE["name"],
+        ),
+    )
+else:
+    _engine = create_async_engine(
+        "sqlite+aiosqlite:///{}".format(
+            env.DATABASE["name"] + ".sqlite3",
+        ),
+    )
+
 db = async_sessionmaker(_engine, expire_on_commit=False)
 
 
