@@ -11,10 +11,13 @@ def is_admin(id: int) -> bool:
     return id in env.ADMINS
 
 
-def format_datetime(dt: typing.Union[int, float, datetime], fmt: str = "%Y.%m.%d - %H:%M") -> str:
+def format_datetime(dt: typing.Union[int, float, datetime, None] = None, fmt: str = "%Y.%m.%d - %H:%M UTC") -> str:
     """
     Convert datetime (or timestamp) to string (timezone is UTC)
     """
+    if dt is None:
+        dt = datetime.now()
+
     if isinstance(dt, (int, float)):
         return datetime.fromtimestamp(dt, tz=timezone.utc).strftime(fmt)
 

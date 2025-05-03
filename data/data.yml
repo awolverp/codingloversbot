@@ -1,4 +1,7 @@
 texts:
+  loading: |-
+    ↻ Loading ...
+
   welcome: |-
     Hi {name}, Your Welcome ...
 
@@ -7,6 +10,22 @@ texts:
     <u>Deploy and use me for your groups ...</u></blockquote>
 
     I am developed and maintained by @awolverp for @CodingLovers_GP group.
+
+  group_is_not_allowed: |-
+    Sorry, group is not allowed to use this bot.
+
+  reconfigure_1: |-
+    🔧 <b>Group Reconfigured</b>
+
+    👨🏻‍💻 You have {admins} admin(s) here.
+    🟢 You have {trusts} trusted user(s) here.
+
+    📅 <u>{date}</u>
+
+  reconfigure_2: |-
+    💡 You can manage your group settings using /settings command ...
+
+
 
 buttons:
   start:
