@@ -29,11 +29,11 @@ def texts(key: str, /, **kwargs) -> str:
     if not kwargs:
         return template.texts[key]
 
-    return template.texts[key] % kwargs
+    return template.texts[key].format_map(kwargs)
 
 
 def buttons(key1: str, key2: str, /, **kwargs) -> str:
     if not kwargs:
         return template.buttons[key1][key2]
 
-    return template.buttons[key1][key2] % kwargs
+    return template.buttons[key1][key2].format_map(kwargs)

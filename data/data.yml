@@ -1,7 +1,14 @@
 texts:
   welcome: |-
-    Hello, I'm a bot.
+    Hi {name}, Your Welcome ...
+
+    <blockquote>🤖 <b>What can I do?</b>
+    I am generally is a simple assistant for groups. My source code is available at <a href="https://github.com/awolverp/codingloversbot">Github</a>.
+    <u>Deploy and use me for your groups ...</u></blockquote>
+
+    I am developed and maintained by @awolverp for @CodingLovers_GP group.
 
 buttons:
   start:
-    support: Support
+    source: 📄 Source Code
+    help: 📚 Help & Commands

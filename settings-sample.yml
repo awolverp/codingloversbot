@@ -26,6 +26,3 @@ database:
 # other groups cannot use this bot
 groups:
   - -100123456789
-
-# bot support username ( must starts with https://t.me/ )
-support: https://t.me/awolverp

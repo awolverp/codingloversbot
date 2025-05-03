@@ -32,5 +32,3 @@ if DATABASE["type"] == "mysql":
     assert "port" in DATABASE, "'port' field is required in database settings"
     assert "user" in DATABASE, "'user' field is required in database settings"
     assert "password" in DATABASE, "'password' field is required in database settings"
-
-SUPPORT: str = _variables["support"]
