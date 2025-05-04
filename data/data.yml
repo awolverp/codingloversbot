@@ -25,7 +25,28 @@ texts:
   reconfigure_2: |-
     💡 You can manage your group settings using /settings command ...
 
+  permission_denied_1: |-
+    ☝🏻 Permission denied, only admins can use this command.
 
+  permission_denied_2: |-
+    ☝🏻 Permission denied, only admins (or trusted users) can use this command.
+
+  command_need_target_1: |-
+    🎯 Please <b>reply or specify the target</b> next to the command.
+
+    Example: <code>/{command} 617326947</code>
+
+  user_muted: |-
+    🤫 Shhhhhh... <a href="tg://openmessage?user_id={id}">{id}</a> muted.
+
+  user_unmuted: |-
+    🔥 Roger that. {id} unmuted.
+
+  promote_me: |-
+    💡 Promote me as admin! I don't have this permission...
+
+  user_not_found: |-
+    💀 User {target} not found, make sure it's correct.
 
 buttons:
   start:

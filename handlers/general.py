@@ -92,11 +92,14 @@ async def _public_start_command(event: OnNewMessage.Event):
                 models.Participant.is_trusted == True,
             )
         )
-    
+
     _last_reconfigure[event.message.chat_id] = object()
 
     await event._client.edit_message(
-        to_edit, templates.texts("reconfigure_1", admins=len(admin_ids), trusts=trust_count, date=utils.format_datetime())
+        to_edit,
+        templates.texts(
+            "reconfigure_1", admins=len(admin_ids), trusts=trust_count, date=utils.format_datetime()
+        ),
     )
     await event._client.send_message(event.message.chat_id, templates.texts("reconfigure_2"))
 

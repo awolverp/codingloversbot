@@ -11,7 +11,9 @@ def is_admin(id: int) -> bool:
     return id in env.ADMINS
 
 
-def format_datetime(dt: typing.Union[int, float, datetime, None] = None, fmt: str = "%Y.%m.%d - %H:%M UTC") -> str:
+def format_datetime(
+    dt: typing.Union[int, float, datetime, None] = None, fmt: str = "%Y.%m.%d - %H:%M UTC"
+) -> str:
     """
     Convert datetime (or timestamp) to string (timezone is UTC)
     """

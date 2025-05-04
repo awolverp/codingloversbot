@@ -1,13 +1,9 @@
 from telethon.tl.custom import Conversation
 from telethon.tl import types
-from telethon import errors
-from telethon.utils import get_attributes
+from telethon.tl.patched import Message
 from .events import TelegramClient
 from os.path import splitext
-from urllib.parse import urlencode
-from core.utils import humansize
 import typing
-import time
 
 
 _R = typing.TypeVar("_R")
@@ -131,92 +127,22 @@ async def read_conversation(
         return deserializer(response)
 
 
-def create_invite_link(username: str, inviter_id: int) -> str:
-    return "https://t.me/{}?{}".format(username, urlencode({"start": "invite%d" % (inviter_id,)}))
+async def resolve_target_id(message: Message, reply_allowed: bool = True):
+    if reply_allowed and message.reply_to_msg_id:
+        _msg: Message = await message.get_reply_message()
 
+        if isinstance(_msg.from_id, types.PeerUser):
+            return _msg.sender_id
 
-class ProgressBarCallback:
-    __slots__ = (
-        "_start_time",
-        "_time_counter",
-        "interval",
-        "client",
-        "text",
-        "chat_id",
-        "message_id",
-        "extra",
-    )
-
-    PROGRESS_BAR_SIZE = 14
-
-    def __init__(
-        self,
-        client: TelegramClient,
-        text: str,
-        chat_id: int,
-        message_id: typing.Optional[int] = None,
-        interval: float = 4,
-        **extra,
-    ):
-        self.client = client
-        self.text = text
-        self.chat_id = chat_id
-        self.message_id = message_id
-        self.extra = extra
-
-        self.interval = interval
-        self._time_counter = 0
-        self._start_time = time.time()
-
-    def _can_send(self) -> bool:
-        t0 = time.time()
-
-        if t0 > (self._time_counter + self.interval):
-            self._time_counter = t0
-            return True
-
-        return False
-
-    async def __call__(self, current: int, total: int):
-        if not self._can_send():
-            return
-
-        # progress bar
-        x_pos = int(self.PROGRESS_BAR_SIZE * current / total)
-        remaining = ((time.time() - self._start_time) / current) * (total - current)
-        mins, sec = divmod(remaining, 60)
-
-        if self.message_id is None:
-            msg = await self.client.send_message(
-                self.chat_id,
-                self.text
-                % {
-                    "percent": (current * 100) // total,
-                    "current": humansize(current / 1024),
-                    "total": humansize(total / 1024),
-                    "bar": "█" * x_pos,
-                    "estimate": f"{int(mins):02}:{int(sec):02}",
-                    **self.extra,
-                },
-                link_preview=False,
-            )
-            self.message_id = msg.id
-            return
-
-        try:
-            await self.client.edit_message(
-                self.chat_id,
-                self.message_id,
-                self.text
-                % {
-                    "percent": (current * 100) // total,
-                    "current": humansize(current / 1024),
-                    "total": humansize(total / 1024),
-                    "bar": "█" * x_pos,
-                    "estimate": f"{int(mins):02}:{int(sec):02}",
-                    **self.extra,
-                },
-                link_preview=False,
-            )
-        except errors.MessageNotModifiedError:
-            pass
+    try:
+        tg = message.message.split(" ")[1]
+    except IndexError:
+        return
+    
+    if tg.startswith("@"):
+        return tg
+    
+    try:
+        return int(tg)
+    except ValueError:
+        return
