@@ -30,6 +30,9 @@ texts:
 
   permission_denied_2: |-
     ☝🏻 Permission denied, only admins (or trusted users) can use this command.
+  
+  promote_error: |-
+    ☝🏻 Boss, I cannot do this ...
 
   command_need_target_1: |-
     🎯 Please <b>reply or specify the target</b> next to the command.
@@ -37,7 +40,7 @@ texts:
     Example: <code>/{command} 617326947</code>
 
   user_muted: |-
-    🤫 Shhhhhh... <a href="tg://openmessage?user_id={id}">{id}</a> muted.
+    🤫 Shhhhhh... {id} muted.
 
     📅 Until: {until}
 
@@ -49,6 +52,14 @@ texts:
 
   user_not_found: |-
     💀 User {target} not found, make sure it's correct.
+
+  user_banned: |-
+    🚷 Ah, user {id} banned; <i>Let it be a lesson to others.</i>
+
+    📅 Until: {until}
+
+  user_unbanned: |-
+    🔥 Roger that. {id} unbanned.
 
 buttons:
   start:

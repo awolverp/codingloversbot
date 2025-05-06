@@ -8,11 +8,19 @@ HANDLERS = [
         OnCommand("start"),
     ),
     AnnotatedGroup(
-        commands.mute_command,
+        commands.ban_command,
         OnCommand("mute", public=True),
     ),
     AnnotatedGroup(
         commands.unmute_command,
         OnCommand("unmute", public=True),
+    ),
+    AnnotatedGroup(
+        commands.ban_command,
+        OnCommand("ban", public=True),
+    ),
+    AnnotatedGroup(
+        commands.unban_command,
+        OnCommand("unban", public=True),
     ),
 ]

@@ -1,7 +1,7 @@
 from telethon.tl.custom import Conversation
 from telethon.tl import types
 from telethon.tl.patched import Message
-from datetime import datetime, timedelta
+import datetime
 from os.path import splitext
 import typing
 
@@ -136,19 +136,26 @@ class ParsedCommand:
         self.duration = duration
 
     @property
-    def until_date(self) -> datetime | None:
+    def until_date(self) -> datetime.datetime | None:
         if not self.duration:
             return None
 
-        return datetime.now() + timedelta(seconds=self.duration)
+        return datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+            seconds=self.duration
+        )
 
 
-async def _resolve_user_id(message: Message, reply_allowed: bool = True):
+async def _resolve_user_id(
+    message: Message, intext_allowed: bool = True, reply_allowed: bool = True
+):
     if reply_allowed and message.reply_to_msg_id:
         _msg: Message = await message.get_reply_message()
 
         if isinstance(_msg.from_id, types.PeerUser):
             return _msg.sender_id, True
+
+    if not intext_allowed:
+        return 0, False
 
     try:
         tg = message.message.split(" ")[1]
@@ -165,7 +172,10 @@ async def _resolve_user_id(message: Message, reply_allowed: bool = True):
 
 
 async def parse_command_message(
-    message: Message, reply_allowed: bool = True, duration_allowed: bool = False
+    message: Message,
+    intext_allowed: bool = True,
+    reply_allowed: bool = True,
+    duration_allowed: bool = False,
 ) -> ParsedCommand:
     target, is_replied = await _resolve_user_id(message, reply_allowed=reply_allowed)
 
