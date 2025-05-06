@@ -39,6 +39,8 @@ texts:
   user_muted: |-
     🤫 Shhhhhh... <a href="tg://openmessage?user_id={id}">{id}</a> muted.
 
+    📅 Until: {until}
+
   user_unmuted: |-
     🔥 Roger that. {id} unmuted.
 

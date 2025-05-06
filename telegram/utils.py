@@ -1,7 +1,7 @@
 from telethon.tl.custom import Conversation
 from telethon.tl import types
 from telethon.tl.patched import Message
-from .events import TelegramClient
+from datetime import datetime, timedelta
 from os.path import splitext
 import typing
 
@@ -127,22 +127,71 @@ async def read_conversation(
         return deserializer(response)
 
 
-async def resolve_target_id(message: Message, reply_allowed: bool = True):
+class ParsedCommand:
+    __slots__ = ("replied", "user_id", "duration")
+
+    def __init__(self, replied: bool, user_id: int, duration: int):
+        self.replied = replied
+        self.user_id = user_id
+        self.duration = duration
+
+    @property
+    def until_date(self) -> datetime | None:
+        if not self.duration:
+            return None
+
+        return datetime.now() + timedelta(seconds=self.duration)
+
+
+async def _resolve_user_id(message: Message, reply_allowed: bool = True):
     if reply_allowed and message.reply_to_msg_id:
         _msg: Message = await message.get_reply_message()
 
         if isinstance(_msg.from_id, types.PeerUser):
-            return _msg.sender_id
+            return _msg.sender_id, True
 
     try:
         tg = message.message.split(" ")[1]
     except IndexError:
-        return
-    
+        return 0, False
+
     if tg.startswith("@"):
-        return tg
-    
+        return tg, False
+
     try:
-        return int(tg)
+        return int(tg), False
     except ValueError:
-        return
+        return 0, False
+
+
+async def parse_command_message(
+    message: Message, reply_allowed: bool = True, duration_allowed: bool = False
+) -> ParsedCommand:
+    target, is_replied = await _resolve_user_id(message, reply_allowed=reply_allowed)
+
+    if not target:
+        raise ValueError
+
+    if not duration_allowed:
+        return ParsedCommand(is_replied, target, 0)
+
+    try:
+        dur = message.message.split(" ")[1 if is_replied else 2]
+    except IndexError:
+        return ParsedCommand(is_replied, target, 0)
+
+    if dur[-1] == "s":
+        _mul = 1
+    elif dur[-1] == "m":
+        _mul = 60
+    elif dur[-1] == "h":
+        _mul = 60 * 60
+    elif dur[-1] == "d":
+        _mul = 60 * 60 * 24
+    else:
+        return ParsedCommand(is_replied, target, 0)
+
+    try:
+        return ParsedCommand(is_replied, target, int(dur[:-1]) * _mul)
+    except ValueError:
+        return ParsedCommand(is_replied, target, 0)

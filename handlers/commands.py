@@ -1,6 +1,6 @@
 from telegram import OnNewMessage, errors
-from telegram.utils import resolve_target_id
-from core import env, templates
+from telegram.utils import parse_command_message
+from core import env, templates, utils
 import models
 
 
@@ -33,9 +33,9 @@ async def mute_command(event: OnNewMessage.Event):
         )
         return
 
-    target_id = await resolve_target_id(event.message)
-
-    if not target_id:
+    try:
+        target_id = await parse_command_message(event.message, True, True)
+    except ValueError:
         await event._client.send_message(
             event.message.chat_id,
             templates.texts("command_need_target_1", command="mute"),
@@ -46,7 +46,8 @@ async def mute_command(event: OnNewMessage.Event):
     try:
         await event._client.edit_permissions(
             event.message.chat_id,
-            target_id,
+            target_id.user_id,
+            until_date=target_id.until_date,
             send_messages=False,
         )
     except errors.ChatAdminRequiredError:
@@ -58,13 +59,17 @@ async def mute_command(event: OnNewMessage.Event):
     except (ValueError, errors.UserIdInvalidError, errors.PeerIdInvalidError):
         await event._client.send_message(
             event.message.chat_id,
-            templates.texts("user_not_found", target=target_id),
+            templates.texts("user_not_found", target=target_id.user_id),
             reply_to=event.message.id,
         )
     else:
         await event._client.send_message(
             event.message.chat_id,
-            templates.texts("user_muted", id=target_id),
+            templates.texts(
+                "user_muted",
+                id=target_id.user_id,
+                until=utils.format_datetime(target_id.until_date) if target_id.duration else "-",
+            ),
             reply_to=event.message.id,
         )
 
@@ -89,9 +94,9 @@ async def unmute_command(event: OnNewMessage.Event):
         )
         return
 
-    target_id = await resolve_target_id(event.message)
-
-    if not target_id:
+    try:
+        target_id = await parse_command_message(event.message, True, False)
+    except ValueError:
         await event._client.send_message(
             event.message.chat_id,
             templates.texts("command_need_target_1", command="unmute"),
@@ -102,7 +107,7 @@ async def unmute_command(event: OnNewMessage.Event):
     try:
         await event._client.edit_permissions(
             event.message.chat_id,
-            target_id,
+            target_id.user_id,
             send_messages=True,
         )
     except errors.ChatAdminRequiredError:
@@ -114,12 +119,12 @@ async def unmute_command(event: OnNewMessage.Event):
     except (ValueError, errors.UserIdInvalidError, errors.PeerIdInvalidError):
         await event._client.send_message(
             event.message.chat_id,
-            templates.texts("user_not_found", target=target_id),
+            templates.texts("user_not_found", target=target_id.user_id),
             reply_to=event.message.id,
         )
     else:
         await event._client.send_message(
             event.message.chat_id,
-            templates.texts("user_unmuted", id=target_id),
+            templates.texts("user_unmuted", id=target_id.user_id),
             reply_to=event.message.id,
         )
