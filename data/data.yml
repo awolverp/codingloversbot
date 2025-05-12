@@ -61,7 +61,38 @@ texts:
   user_unbanned: |-
     🔥 Roger that. {id} unbanned.
 
+  warn_action_0: |-
+    🔇 User muted for 24 hours.
+
+  warn_action_1: |-
+    🔇 User muted forever.
+
+  warn_action_2: |-
+    🙊 User kicked.
+
+  warn_action_3: |-
+    ⛔ User banned.
+
+  perform_warn_action: |-
+    ☝🏻 The user's warns reached the limit ( 3/3 ).
+    
+    {action}
+
+  warn_increased: |-
+    🚨 The user {id} got warn! Be careful ( {warns}/3 ) ...
+
+  warn_decreased: |-
+    🚨 Warns of this user decreased by an admin. ( {warns}/3 ) ...
+  
+  warns_info: |-
+    ⭐ This user {id} has {warns} warns.
+
+    <blockquote>📌 The limit is 3 warns.</blockquote> 
+
 buttons:
   start:
     source: 📄 Source Code
     help: 📚 Help & Commands
+
+  warns:
+    decrease: ⭐ Decrease a warn

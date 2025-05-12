@@ -85,7 +85,7 @@ class Participant(Model):
     __tablename__ = "participants"
 
     id: Mapped[int] = mapped_column(sqltypes.Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(sqltypes.BigInteger, nullable=False)
+    user_id: Mapped[int] = mapped_column(sqltypes.BigInteger, nullable=False, index=True)
     is_trusted: Mapped[bool] = mapped_column(sqltypes.Boolean, nullable=False)
 
     warns: Mapped[int] = mapped_column(sqltypes.SmallInteger, nullable=False)
@@ -93,7 +93,7 @@ class Participant(Model):
 
     # Here I decided to don't use ForeignKeys.
     # This project is not very important, and also this can improve the database speed
-    group_id: Mapped[int] = mapped_column(sqltypes.BigInteger, nullable=False)
+    group_id: Mapped[int] = mapped_column(sqltypes.BigInteger, nullable=False, index=True)
 
 
 if env.DATABASE["type"] == "mysql":

@@ -177,7 +177,11 @@ async def parse_command_message(
     reply_allowed: bool = True,
     duration_allowed: bool = False,
 ) -> ParsedCommand:
-    target, is_replied = await _resolve_user_id(message, reply_allowed=reply_allowed)
+    target, is_replied = await _resolve_user_id(
+        message, reply_allowed=reply_allowed, intext_allowed=intext_allowed
+    )
+    if target == message._client.me.id:
+        target = None
 
     if not target:
         raise ValueError
