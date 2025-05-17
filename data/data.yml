@@ -89,6 +89,33 @@ texts:
 
     <blockquote>📌 The limit is 3 warns.</blockquote> 
 
+  admin_user_info: |-
+    👑 <b>Admin Info</b>
+    The user is an admin of this group as my last configuration.
+
+  trusted_user_info: |-
+    ⭐ <b>Trusted User</b> (<code>{id}</code>)
+    The user is trusted by admins in this group.
+
+    🛑 Warns: {warns} / 3
+
+    <blockquote><b>Trusted users can join consensus of votekicks, no more.</b></blockquote>
+
+  normal_user_info: |-
+    👤 <b>Normal User</b> (<code>{id}</code>)
+
+    🛑 Warns: {warns} / 3
+    💀 Votekicks: {votekicks} / 3
+
+  user_not_participant: |-
+    The user is not participant of this group.
+
+  user_has_left: |-
+    The user has left this group.
+
+  user_has_banned: |-
+    The user has banned from group (kicked by {kicked_by}).
+
 buttons:
   start:
     source: 📄 Source Code

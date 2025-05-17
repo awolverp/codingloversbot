@@ -35,4 +35,8 @@ HANDLERS = [
         commands.decrease_warn_query,
         OnCallbackQuery("decrease-warn", ("/", 1)),
     ),
+    AnnotatedGroup(
+        commands.info_command,
+        OnCommand("info", public=True),
+    ),
 ]

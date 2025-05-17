@@ -86,6 +86,14 @@ async def _public_start_command(event: OnNewMessage.Event):
                 models.sql.insert(models.Admin).values(user_id=i, group_id=event.message.chat_id)
             )
 
+        await session.execute(
+            models.sql.delete(models.Participant).where(
+                models.Participant.group_id == event.message.chat_id,
+                models.Participant.user_id.in_(admin_ids),
+                models.Participant.is_trusted == True,
+            )
+        )
+
         trust_count = await session.scalar(
             models.sql.select(models.sql.func.count(models.Participant.id)).where(
                 models.Participant.group_id == event.message.chat_id,

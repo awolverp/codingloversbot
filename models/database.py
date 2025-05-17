@@ -78,7 +78,6 @@ class Participant(Model):
     - user_id
     - is_trusted
     - warns
-    - votekicks
     - group_id
     """
 
@@ -89,7 +88,6 @@ class Participant(Model):
     is_trusted: Mapped[bool] = mapped_column(sqltypes.Boolean, nullable=False)
 
     warns: Mapped[int] = mapped_column(sqltypes.SmallInteger, nullable=False)
-    votekicks: Mapped[int] = mapped_column(sqltypes.SmallInteger, nullable=False)
 
     # Here I decided to don't use ForeignKeys.
     # This project is not very important, and also this can improve the database speed

@@ -1,5 +1,6 @@
 from telegram import TelegramClient, OnNewMessage, OnCallbackQuery, errors, types
 from telegram.utils import parse_command_message
+from telethon.tl import functions
 from core import env, templates, utils
 import models
 
@@ -16,15 +17,6 @@ async def mute_command(event: OnNewMessage.Event):
             )
         )
 
-        # if not has_access:
-        #     has_access = await session.scalar(
-        #         models.sql.select(models.Participant.id).where(
-        #             models.Participant.user_id == event.message.sender_id,
-        #             models.Participant.group_id == event.message.chat_id,
-        #             models.Participant.is_trusted == True,
-        #         )
-        #     )
-
     if not has_access:
         await event._client.send_message(
             event.message.chat_id,
@@ -35,6 +27,13 @@ async def mute_command(event: OnNewMessage.Event):
 
     try:
         target_id = await parse_command_message(event.message, duration_allowed=True)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -107,6 +106,13 @@ async def unmute_command(event: OnNewMessage.Event):
 
     try:
         target_id = await parse_command_message(event.message, True, False)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -174,6 +180,13 @@ async def ban_command(event: OnNewMessage.Event):
 
     try:
         target_id = await parse_command_message(event.message, duration_allowed=True)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -246,6 +259,13 @@ async def unban_command(event: OnNewMessage.Event):
 
     try:
         target_id = await parse_command_message(event.message, True, False)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -351,6 +371,13 @@ async def warn_command(event: OnNewMessage.Event):
 
     try:
         target = await parse_command_message(event.message)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -374,7 +401,6 @@ async def warn_command(event: OnNewMessage.Event):
                     user_id=target.user_id,
                     is_trusted=False,
                     warns=1,
-                    votekicks=0,
                     group_id=event.message.chat_id,
                 )
             )
@@ -386,13 +412,7 @@ async def warn_command(event: OnNewMessage.Event):
 
             await session.execute(
                 models.sql.update(models.Participant)
-                .values(
-                    warns=(
-                        0
-                        if warns >= 2  # because will be perform action soon
-                        else (warns + 1)
-                    )
-                )
+                .values(warns=(warns + 1) % 3)
                 .where(models.Participant.id == row_id)
             )
 
@@ -405,9 +425,7 @@ async def warn_command(event: OnNewMessage.Event):
     if warns >= 2:
         # perform action
         try:
-            await _WARN_ACTIONS[action](
-                event._client, event.message.chat_id, event.message.sender_id
-            )
+            await _WARN_ACTIONS[action](event._client, event.message.chat_id, target.user_id)
         except errors.ChatAdminRequiredError:
             await event._client.send_message(
                 event.message.chat_id,
@@ -422,7 +440,7 @@ async def warn_command(event: OnNewMessage.Event):
         ):
             await event._client.send_message(
                 event.message.chat_id,
-                templates.texts("user_not_found", target=event.message.sender_id),
+                templates.texts("user_not_found", target=target.user_id),
                 reply_to=event.message.id,
             )
         except errors.UserAdminInvalidError:
@@ -534,6 +552,13 @@ async def warns_command(event: OnNewMessage.Event):
 
     try:
         target = await parse_command_message(event.message)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
     except ValueError:
         await event._client.send_message(
             event.message.chat_id,
@@ -567,3 +592,136 @@ async def warns_command(event: OnNewMessage.Event):
         reply_to=event.message.id,
         buttons=buttons,
     )
+
+
+async def info_command(event: OnNewMessage.Event):
+    if event.message.chat_id not in env.GROUPS:
+        return
+
+    async with models.db() as session:
+        has_access = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == event.message.sender_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+        if not has_access:
+            has_access = await session.scalar(
+                models.sql.select(models.Participant.id).where(
+                    models.Participant.user_id == event.message.sender_id,
+                    models.Participant.group_id == event.message.chat_id,
+                    models.Participant.is_trusted == True,
+                )
+            )
+
+    if not has_access:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("permission_denied_2"),
+            reply_to=event.message.id,
+        )
+        return
+
+    try:
+        target = await parse_command_message(event.message)
+        target = target.user_id
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
+    except ValueError:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("command_need_target_1", command="info"),
+            reply_to=event.message.id,
+        )
+        return
+
+    try:
+        status: types.channels.ChannelParticipant = await event._client(
+            functions.channels.GetParticipantRequest(
+                channel=event.message.input_chat,
+                participant=await event._client.get_input_entity(target),
+            )
+        )
+    except errors.UserNotParticipantError:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_participant"),
+            reply_to=event.message.id,
+        )
+        return
+
+    if isinstance(status.participant, types.ChannelParticipantLeft):
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_has_left"),
+            reply_to=event.message.id,
+        )
+        return
+
+    if isinstance(status.participant, types.ChannelParticipantBanned):
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts(
+                "user_has_banned", kicked_by=status.participant.kicked_by or "<unknown>"
+            ),
+            reply_to=event.message.id,
+        )
+        return
+
+    if isinstance(status.participant, types.ChannelParticipantSelf):
+        # ignore request, admin is kidding me :/
+        return
+
+    target = status.participant.user_id
+
+    async with models.db() as session:
+        participant = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == target,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+        # means target is admin
+        if participant:
+            await event._client.send_message(
+                event.message.chat_id,
+                templates.texts("admin_user_info"),
+                reply_to=event.message.id,
+            )
+            return
+
+        participant = await session.scalar(
+            models.sql.select(models.Participant).where(
+                models.Participant.user_id == target,
+                models.Participant.group_id == event.message.chat_id,
+            )
+        )
+
+    if participant is None or not participant.is_trusted:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts(
+                "normal_user_info",
+                id=target,
+                warns=participant.warns if participant else 0,
+                votekicks=len(models.VOTEKICKS.get((event.message.chat_id, target), [])),
+            ),
+            reply_to=event.message.id,
+        )
+    else:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts(
+                "trusted_user_info",
+                id=target,
+                warns=participant.warns,
+            ),
+            reply_to=event.message.id,
+        )

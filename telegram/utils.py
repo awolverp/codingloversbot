@@ -1,6 +1,7 @@
 from telethon.tl.custom import Conversation
 from telethon.tl import types
 from telethon.tl.patched import Message
+from telethon.utils import get_peer_id
 import datetime
 from os.path import splitext
 import typing
@@ -180,6 +181,18 @@ async def parse_command_message(
     target, is_replied = await _resolve_user_id(
         message, reply_allowed=reply_allowed, intext_allowed=intext_allowed
     )
+
+    if isinstance(target, str):
+        try:
+            entity = await message._client.get_input_entity(target)
+        except ValueError:
+            raise KeyError(target) from None
+
+        if not isinstance(entity, types.InputPeerUser):
+            raise KeyError(target) from None
+
+        target = entity.user_id
+
     if target == message._client.me.id:
         target = None
 

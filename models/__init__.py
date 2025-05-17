@@ -8,3 +8,6 @@ from .database import (
     dispose_database as dispose_database,
 )
 from sqlalchemy import sql as sql
+import cachebox
+
+VOTEKICKS = cachebox.TTLCache[tuple[int, int], list[int]](0, ttl=30 * 60)
