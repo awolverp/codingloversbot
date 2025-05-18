@@ -78,6 +78,12 @@ texts:
     
     {action}
 
+  warn_to_admin: |-
+    ☝🏻 Bro, user is admin, cannot get warn.
+
+  warn_to_trusted: |-
+    ☝🏻 Man, user is trusted, cannot get warn.
+
   warn_increased: |-
     🚨 The user {id} got warn! Be careful ( {warns}/3 ) ...
 
@@ -97,9 +103,7 @@ texts:
     ⭐ <b>Trusted User</b> (<code>{id}</code>)
     The user is trusted by admins in this group.
 
-    🛑 Warns: {warns} / 3
-
-    <blockquote><b>Trusted users can join consensus of votekicks, no more.</b></blockquote>
+    <blockquote><b>Trusted users can join consensus of votekicks, and cannot get warn, no more.</b></blockquote>
 
   normal_user_info: |-
     👤 <b>Normal User</b> (<code>{id}</code>)
@@ -116,10 +120,27 @@ texts:
   user_has_banned: |-
     The user has banned from group (kicked by {kicked_by}).
 
+  cannot_trust_1: |-
+    👑 <code>{id}</code> is admin of this group, is already trusted by me.
+
+  cannot_trust_2: |-
+    ❗ Man, <code>{id}</code> is already a trusted user.
+
+  user_trusted: |-
+    🤝 Copy that. Now I can trust the <code>{id}</code> in this group.
+
+    <blockquote><b>Trusted users can join consensus of votekicks, and cannot get warn, no more.</b></blockquote>
+
+  cannot_untrust: |-
+    ❗ Already I don't trust to <code>{id}</code>.
+
+  user_untrusted: |-
+    🫠 From now on, I don't trust <code>{id}</code> anymore.
+
 buttons:
   start:
     source: 📄 Source Code
     help: 📚 Help & Commands
 
   warns:
-    decrease: ⭐ Decrease a warn
+    decrease: 🡻 Decrease a warn

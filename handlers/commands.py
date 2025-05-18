@@ -1,4 +1,4 @@
-from telegram import TelegramClient, OnNewMessage, OnCallbackQuery, errors, types
+from telegram import TelegramClient, OnNewMessage, errors, types
 from telegram.utils import parse_command_message
 from telethon.tl import functions
 from core import env, templates, utils
@@ -387,8 +387,25 @@ async def warn_command(event: OnNewMessage.Event):
         return
 
     async with models.db.begin() as session:
+        is_admin = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == target.user_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+        if is_admin:
+            await event._client.send_message(
+                event.message.chat_id,
+                templates.texts("warn_to_admin"),
+                reply_to=event.message.id,
+            )
+            return
+
         warns = await session.execute(
-            models.sql.select(models.Participant.id, models.Participant.warns).where(
+            models.sql.select(
+                models.Participant.id, models.Participant.warns, models.Participant.is_trusted
+            ).where(
                 models.Participant.user_id == target.user_id,
                 models.Participant.group_id == event.message.chat_id,
             )
@@ -408,7 +425,15 @@ async def warn_command(event: OnNewMessage.Event):
             action = 0  # avoid UnboundLocalError
 
         else:
-            row_id, warns = warns.t
+            row_id, warns, is_trusted = warns.t
+
+            if is_trusted:
+                await event._client.send_message(
+                    event.message.chat_id,
+                    templates.texts("warn_to_trusted"),
+                    reply_to=event.message.id,
+                )
+                return
 
             await session.execute(
                 models.sql.update(models.Participant)
@@ -470,64 +495,6 @@ async def warn_command(event: OnNewMessage.Event):
                 ]
             ],
         )
-
-
-async def decrease_warn_query(event: OnCallbackQuery.Event):
-    if event.chat_id not in env.GROUPS:
-        return
-
-    async with models.db() as session:
-        has_access = await session.scalar(
-            models.sql.select(models.Admin.id).where(
-                models.Admin.user_id == event.sender_id,
-                models.Admin.group_id == event.chat_id,
-            )
-        )
-
-    if not has_access:
-        await event.answer(templates.texts("permission_denied_1"), alert=True, cache_time=10)
-        return
-
-    user_id = event.data.split(b"/")[1].decode()
-
-    try:
-        user_id = int(user_id)
-    except ValueError:
-        pass
-
-    async with models.db.begin() as session:
-        warns = await session.execute(
-            models.sql.select(models.Participant.id, models.Participant.warns).where(
-                models.Participant.user_id == user_id,
-                models.Participant.group_id == event.chat_id,
-            )
-        )
-        row_id, warns = warns.fetchone().t
-
-        assert warns > 0, f"warns ({warns}) is not greater than zero"
-
-        await session.execute(
-            models.sql.update(models.Participant)
-            .values({models.Participant.warns: models.Participant.warns - 1})
-            .where(models.Participant.id == row_id)
-        )
-
-    buttons = None
-    if warns > 1:
-        buttons = [
-            [
-                types.KeyboardButtonCallback(
-                    templates.buttons("warns", "decrease"), f"decrease-warn/{user_id}"
-                )
-            ]
-        ]
-
-    await event._client.edit_message(
-        event.chat_id,
-        event.message_id,
-        templates.texts("warn_decreased", id=user_id, warns=warns - 1),
-        buttons=buttons,
-    )
 
 
 async def warns_command(event: OnNewMessage.Event):
@@ -725,3 +692,160 @@ async def info_command(event: OnNewMessage.Event):
             ),
             reply_to=event.message.id,
         )
+
+
+async def trust_command(event: OnNewMessage.Event):
+    if event.message.chat_id not in env.GROUPS:
+        return
+
+    async with models.db() as session:
+        has_access = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == event.message.sender_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+    if not has_access:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("permission_denied_1"),
+            reply_to=event.message.id,
+        )
+        return
+
+    try:
+        target = await parse_command_message(event.message)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
+    except ValueError:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("command_need_target_1", command="trust"),
+            reply_to=event.message.id,
+        )
+        return
+
+    async with models.db.begin() as session:
+        is_admin = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == target.user_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+        if is_admin:
+            await event._client.send_message(
+                event.message.chat_id,
+                templates.texts("cannot_trust_1", id=target.user_id),
+                reply_to=event.message.id,
+            )
+            return
+
+        participant = await session.scalar(
+            models.sql.select(models.Participant).where(
+                models.Participant.user_id == target.user_id,
+                models.Participant.group_id == event.message.chat_id,
+            )
+        )
+
+        if participant and participant.is_trusted:
+            await event._client.send_message(
+                event.message.chat_id,
+                templates.texts("cannot_trust_2", id=target.user_id),
+                reply_to=event.message.id,
+            )
+            return
+
+        if participant is None:
+            await session.execute(
+                models.sql.insert(models.Participant).values(
+                    user_id=target.user_id,
+                    is_trusted=True,
+                    warns=0,
+                    group_id=event.message.chat_id,
+                )
+            )
+        else:
+            await session.execute(
+                models.sql.update(models.Participant)
+                .values(warns=0, is_trusted=True)
+                .where(models.Participant.id == participant.id)
+            )
+
+    await event._client.send_message(
+        event.message.chat_id,
+        templates.texts("user_trusted", id=target.user_id),
+        reply_to=event.message.id,
+    )
+
+
+async def untrust_command(event: OnNewMessage.Event):
+    if event.message.chat_id not in env.GROUPS:
+        return
+
+    async with models.db() as session:
+        has_access = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == event.message.sender_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+    if not has_access:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("permission_denied_1"),
+            reply_to=event.message.id,
+        )
+        return
+
+    try:
+        target = await parse_command_message(event.message)
+    except KeyError as e:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("user_not_found", target=str(e)),
+            reply_to=event.message.id,
+        )
+        return
+    except ValueError:
+        await event._client.send_message(
+            event.message.chat_id,
+            templates.texts("command_need_target_1", command="untrust"),
+            reply_to=event.message.id,
+        )
+        return
+
+    async with models.db.begin() as session:
+        participant = await session.scalar(
+            models.sql.select(models.Participant).where(
+                models.Participant.user_id == target.user_id,
+                models.Participant.group_id == event.message.chat_id,
+            )
+        )
+
+        if participant is None or not participant.is_trusted:
+            await event._client.send_message(
+                event.message.chat_id,
+                templates.texts("cannot_untrust", id=target.user_id),
+                reply_to=event.message.id,
+            )
+            return
+        else:
+            await session.execute(
+                models.sql.update(models.Participant)
+                .values(warns=0, is_trusted=False)
+                .where(models.Participant.id == participant.id)
+            )
+
+    await event._client.send_message(
+        event.message.chat_id,
+        templates.texts("user_untrusted", id=target.user_id),
+        reply_to=event.message.id,
+    )

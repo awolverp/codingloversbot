@@ -1,5 +1,5 @@
 from telegram import AnnotatedGroup, OnCommand, OnCallbackQuery
-from . import general, commands
+from . import general, commands, queries
 
 
 HANDLERS = [
@@ -32,11 +32,19 @@ HANDLERS = [
         OnCommand("warns", public=True),
     ),
     AnnotatedGroup(
-        commands.decrease_warn_query,
+        queries.decrease_warn_query,
         OnCallbackQuery("decrease-warn", ("/", 1)),
     ),
     AnnotatedGroup(
         commands.info_command,
         OnCommand("info", public=True),
+    ),
+    AnnotatedGroup(
+        commands.trust_command,
+        OnCommand("trust", public=True),
+    ),
+    AnnotatedGroup(
+        commands.untrust_command,
+        OnCommand("untrust", public=True),
     ),
 ]
