@@ -1,5 +1,5 @@
 from telegram import AnnotatedGroup, OnCommand, OnCallbackQuery
-from . import general, commands, queries
+from . import general, commands, queries, votekick
 
 
 HANDLERS = [
@@ -46,5 +46,13 @@ HANDLERS = [
     AnnotatedGroup(
         commands.untrust_command,
         OnCommand("untrust", public=True),
+    ),
+    AnnotatedGroup(
+        commands.ping_command,
+        OnCommand("ping", public=True),
+    ),
+    AnnotatedGroup(
+        votekick.votekick_command,
+        OnCommand("votekick", public=True),
     ),
 ]

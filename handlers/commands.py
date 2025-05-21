@@ -3,6 +3,33 @@ from telegram.utils import parse_command_message
 from telethon.tl import functions
 from core import env, templates, utils
 import models
+import time
+
+
+async def ping_command(event: OnNewMessage.Event):
+    if event.message.chat_id not in env.GROUPS:
+        return
+
+    async with models.db() as session:
+        has_access = await session.scalar(
+            models.sql.select(models.Admin.id).where(
+                models.Admin.user_id == event.message.sender_id,
+                models.Admin.group_id == event.message.chat_id,
+            )
+        )
+
+    if not has_access:
+        return
+
+    ping = time.time()
+    await event._client(functions.PingRequest(0))
+    ping = int((time.time() - ping) * 1000)
+
+    await event._client.send_message(
+        event.message.chat_id,
+        templates.texts("pong", ping=ping),
+        reply_to=event.message.id,
+    )
 
 
 async def mute_command(event: OnNewMessage.Event):

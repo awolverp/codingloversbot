@@ -137,6 +137,25 @@ texts:
   user_untrusted: |-
     🫠 From now on, I don't trust <code>{id}</code> anymore.
 
+  votekick_pending: |-
+    ⚖️ <b>Votekick Pending</b> ...
+
+    👤 The accused: <code>{id}</code>
+    😠 Complainants: <code>{votekicks}</code>
+
+    ⏰ Remaining Time: {duration}
+
+  votekick_agree: |-
+    ⚖️ <b>Votekick | Agree</b>
+
+    Sorry for <code>{id}</code>, user banned for 24 hours.
+
+  pong: |-
+    🚀 Pong | {ping}ms
+
+  votekick_to_trusted: |-
+    ☝🏻 Man, user is trusted, cannot get votekick.
+
 buttons:
   start:
     source: 📄 Source Code

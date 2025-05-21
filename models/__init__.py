@@ -10,4 +10,4 @@ from .database import (
 from sqlalchemy import sql as sql
 import cachebox
 
-VOTEKICKS = cachebox.TTLCache[tuple[int, int], list[int]](0, ttl=30 * 60)
+VOTEKICKS = cachebox.TTLCache[tuple[int, int], list[int]](0, ttl=1 * 60 * 60)
