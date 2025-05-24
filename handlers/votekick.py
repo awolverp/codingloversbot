@@ -78,7 +78,7 @@ async def votekick_command(event: OnNewMessage.Event):
     else:
         if event.message.sender_id in models.VOTEKICKS[key]:
             return
-        
+
         models.VOTEKICKS[key].append(event.message.sender_id)
 
     votekick_participants, remaining = models.VOTEKICKS.get_with_expire(key)
@@ -110,7 +110,9 @@ async def votekick_command(event: OnNewMessage.Event):
                 "votekick_pending",
                 id=target.user_id,
                 votekicks=", ".join(str(i) for i in votekick_participants),
-                duration="{:02d}:{:02d}:{:02d}".format(int(hours), int(minutes), int(remaining_seconds)),
+                duration="{:02d}:{:02d}:{:02d}".format(
+                    int(hours), int(minutes), int(remaining_seconds)
+                ),
             ),
             reply_to=event.message.id,
         )

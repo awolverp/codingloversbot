@@ -156,6 +156,57 @@ texts:
   votekick_to_trusted: |-
     ☝🏻 Man, user is trusted, cannot get votekick.
 
+  settings: |-
+    ⚙️ <b><code>{id}</code>'s Settings</b>
+    
+    <blockquote><b>📍 Stats</b>
+    ● Admins: {admins}
+    ● Trusted users: {trusted}
+    ● Users with warn: {warned}
+    </blockquote>
+
+    What should I do when the warns reach 3?
+    {warn_action}
+
+  help: |-
+    <b>📚 Help & Commands</b>
+
+    <blockquote>💡 <b>How to use me?</b>
+    To using me for your groups, you have two ways:
+    ● Contact the developer to allow your group for using this bot.
+    ● I am open-source. You can host me yourself and use me in your groups.</blockquote>
+
+    ⚙️ <b>Configuration</b>
+    Use <u><i>/start</i></u> command to reconfigure and reload the group admins.
+    Use <u><i>/settings</i></u> command to configure your group settings.
+
+    👤 <b>User Management</b>
+    Use <u><i>/mute</i></u> or <u><i>/unmute</i></u> commands to mute or unmute users by replying to them or using their username or ID.
+    You can also specify the mute duration. for instance, send <i>/mute @username 3d</i> to mute @username for 3 days.
+
+    Use <u><i>/ban</i></u> or <u><i>/unban</i></u> commands to ban or unban users by replying to them or using their username or ID.
+    You can also specify the ban duration. for instance, send <i>/ban @username 3d</i> to ban @username for 3 days.
+
+    Use <u><i>/warn</i></u> command to give warn to users by replying to them or using their username or ID.
+    Limit of warns is 3, and you can specify the action of it in <i>/settings</i>.
+    Also you can use <u><i>/warns</i></u> command to manage a user warns.
+
+    Use <u><i>/info</i></u> command to see information of a user by replying to him/her or using its username or ID.
+
+    🌟 <b>Trusted Users</b>
+    Each group can have some trusted users, which are marked with <u><i>/trust</i></u> command.
+    This trusted users can <i>/votekick</i> other users to be banned.
+    Note that trusted users cannot get warn.
+    You can untrust users by using <u><i>/untrust</i></u> command.
+
+    🗳️ <b>Votekicks</b>
+    Admins or trusted users can use <u><i>/votekick</i></u> command in groups.
+    By using this and replying that to another user, the one will get a votekick (for only 2 hours).
+    When users reached 3 votekciks, will be banned...
+
+    🚀 <b>Meta</b>
+    Use <u><i>/ping</i></u> command to ping bot in your group.
+
 buttons:
   start:
     source: 📄 Source Code
@@ -163,3 +214,6 @@ buttons:
 
   warns:
     decrease: 🡻 Decrease a warn
+
+  settings:
+    change_warn_action: 🔄 Change Warn Action

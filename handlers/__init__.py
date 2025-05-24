@@ -4,8 +4,13 @@ from . import general, commands, queries, votekick
 
 HANDLERS = [
     AnnotatedGroup(
-        general.start_command,
+        general.start_command_or_query,
         OnCommand("start"),
+        OnCallbackQuery("start"),
+    ),
+    AnnotatedGroup(
+        general.help_query,
+        OnCallbackQuery("help"),
     ),
     AnnotatedGroup(
         commands.ban_command,
