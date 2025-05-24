@@ -8,6 +8,10 @@
 > ![WARNING]\
 > This bot is in testing process and not completely tested.
 
+
+## Demo
+The bot is running on t.me/CodingLoversRoBot.
+
 ## Features
 - Useful user management operations such as mute, ban, etc.
 - A simple warning system.

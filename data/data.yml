@@ -219,7 +219,6 @@ texts:
 
 buttons:
   start:
-    source: 📄 Source Code
     help: 📚 Help & Commands
 
   warns:

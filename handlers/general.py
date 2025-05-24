@@ -22,12 +22,6 @@ async def _private_start_command(
             templates.texts("welcome", name=user.first_name),
             reply_to=reply or None,
             buttons=[
-                [
-                    types.KeyboardButtonUrl(
-                        templates.buttons("start", "source"),
-                        "https://github.com/awolverp/codingloversbot",
-                    )
-                ],
                 [types.KeyboardButtonCallback(templates.buttons("start", "help"), "help")],
             ],
         )
@@ -37,12 +31,6 @@ async def _private_start_command(
             message_id,
             templates.texts("welcome", name=user.first_name),
             buttons=[
-                [
-                    types.KeyboardButtonUrl(
-                        templates.buttons("start", "source"),
-                        "https://github.com/awolverp/codingloversbot",
-                    )
-                ],
                 [types.KeyboardButtonCallback(templates.buttons("start", "help"), "help")],
             ],
         )
