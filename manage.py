@@ -36,7 +36,6 @@ bot = TelegramClient(
     env.API_ID,
     env.API_HASH,
     flood_sleep_threshold=10,
-    proxy=("socks5", "127.0.0.1", 12334),
 )
 
 

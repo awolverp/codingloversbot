@@ -1,0 +1,12 @@
+services:
+  codinglovers_tgbot:
+    container_name: codinglovers_tgbot
+    build: .
+    
+    volumes:
+      - ./:/app/
+    
+    environment:
+      - PYTHONUNBUFFERED=1
+
+    command: python3 manage.py
