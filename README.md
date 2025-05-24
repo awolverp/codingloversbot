@@ -5,7 +5,7 @@
     <em>A Simple Group Manager | Designed for t.me/CodingLovers_GP</em>
 </p>
 
-> ![WARNING]\
+> [!WARNING]\
 > This bot is in testing process and not completely tested.
 
 ## Features
