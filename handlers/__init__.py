@@ -60,4 +60,12 @@ HANDLERS = [
         votekick.votekick_command,
         OnCommand("votekick", public=True),
     ),
+    AnnotatedGroup(
+        commands.settings_command,
+        OnCommand("settings", public=True),
+    ),
+    AnnotatedGroup(
+        queries.change_warn_action_query,
+        OnCallbackQuery("change-warn-action"),
+    ),
 ]

@@ -26,10 +26,10 @@ texts:
     💡 You can manage your group settings using /settings command ...
 
   permission_denied_1: |-
-    ☝🏻 Permission denied, only admins can use this command.
+    ☝🏻 Permission denied, only admins can use this.
 
   permission_denied_2: |-
-    ☝🏻 Permission denied, only admins (or trusted users) can use this command.
+    ☝🏻 Permission denied, only admins (or trusted users) can use this.
   
   promote_error: |-
     ☝🏻 Boss, I cannot do this ...
@@ -156,17 +156,27 @@ texts:
   votekick_to_trusted: |-
     ☝🏻 Man, user is trusted, cannot get votekick.
 
+  settings_warn_action_0: |-
+    🔇 Mute for 24 hours.
+
+  settings_warn_action_1: |-
+    🔇 Mute for forever.
+
+  settings_warn_action_2: |-
+    🙊 Kick user.
+
+  settings_warn_action_3: |-
+    ⛔ Ban user.
+
   settings: |-
     ⚙️ <b><code>{id}</code>'s Settings</b>
     
-    <blockquote><b>📍 Stats</b>
-    ● Admins: {admins}
-    ● Trusted users: {trusted}
-    ● Users with warn: {warned}
-    </blockquote>
+    What should I do when the warns reach 3? <u>{warn_action}</u>
 
-    What should I do when the warns reach 3?
-    {warn_action}
+    <b>Stats</b>
+    👑 Admins: {admins}
+    ⭐ Trusted users: {trusted}
+    ❗ Users with warn: {warned}
 
   help: |-
     <b>📚 Help & Commands</b>
