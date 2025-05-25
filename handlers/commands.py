@@ -1,6 +1,7 @@
 from telegram import TelegramClient, OnNewMessage, errors, types
 from telegram.utils import parse_command_message
 from telethon.tl import functions
+from telethon.utils import get_peer_id
 from core import env, templates, utils
 import models
 import time
@@ -659,21 +660,14 @@ async def info_command(event: OnNewMessage.Event):
         )
         return
 
-    if isinstance(status.participant, types.ChannelParticipantBanned):
-        await event._client.send_message(
-            event.message.chat_id,
-            templates.texts(
-                "user_has_banned", kicked_by=status.participant.kicked_by or "<unknown>"
-            ),
-            reply_to=event.message.id,
-        )
-        return
-
     if isinstance(status.participant, types.ChannelParticipantSelf):
         # ignore request, admin is kidding me :/
         return
 
-    target = status.participant.user_id
+    if isinstance(status.participant, types.ChannelParticipantBanned):
+        target = get_peer_id(status.participant.peer)
+    else:
+        target = status.participant.user_id
 
     async with models.db() as session:
         participant = await session.scalar(
