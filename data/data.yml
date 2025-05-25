@@ -138,10 +138,7 @@ texts:
     🫠 From now on, I don't trust <code>{id}</code> anymore.
 
   votekick_pending: |-
-    ⚖️ <b>Votekick Pending</b> ...
-
-    👤 The accused: <code>{id}</code>
-    😠 Complainants: <code>{votekicks}</code>
+    ⚖️ <b>Votekick Pending For {id}</b> ...
 
     ⏰ Remaining Time: {duration}
 
@@ -211,8 +208,8 @@ texts:
 
     🗳️ <b>Votekicks</b>
     Admins or trusted users can use <u><i>/votekick</i></u> command in groups.
-    By using this and replying that to another user, the one will get a votekick (for only 2 hours).
-    When users reached 3 votekciks, will be banned...
+    By sending this and replying that to another user, the user will get a votekick (for only 2 hours).
+    When users reached 3 votekicks, will be banned...
 
     🚀 <b>Meta</b>
     Use <u><i>/ping</i></u> command to ping bot in your group.

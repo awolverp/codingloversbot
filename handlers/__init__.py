@@ -13,7 +13,7 @@ HANDLERS = [
         OnCallbackQuery("help"),
     ),
     AnnotatedGroup(
-        commands.ban_command,
+        commands.mute_command,
         OnCommand("mute", public=True),
     ),
     AnnotatedGroup(
@@ -55,6 +55,7 @@ HANDLERS = [
     AnnotatedGroup(
         commands.ping_command,
         OnCommand("ping", public=True),
+        OnCommand("ping", private=True, admin_required=True),
     ),
     AnnotatedGroup(
         votekick.votekick_command,

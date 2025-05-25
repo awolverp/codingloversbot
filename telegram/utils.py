@@ -158,6 +158,8 @@ async def _resolve_user_id(
     if not intext_allowed:
         return 0, False
 
+    print(message.entities)
+
     try:
         tg = message.message.split(" ")[1]
     except IndexError:

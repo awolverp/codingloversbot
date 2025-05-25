@@ -7,19 +7,20 @@ import time
 
 
 async def ping_command(event: OnNewMessage.Event):
-    if event.message.chat_id not in env.GROUPS:
+    if not event.message.is_private and event.message.chat_id not in env.GROUPS:
         return
 
-    async with models.db() as session:
-        has_access = await session.scalar(
-            models.sql.select(models.Admin.id).where(
-                models.Admin.user_id == event.message.sender_id,
-                models.Admin.group_id == event.message.chat_id,
+    if not event.message.is_private:
+        async with models.db() as session:
+            has_access = await session.scalar(
+                models.sql.select(models.Admin.id).where(
+                    models.Admin.user_id == event.message.sender_id,
+                    models.Admin.group_id == event.message.chat_id,
+                )
             )
-        )
 
-    if not has_access:
-        return
+        if not has_access:
+            return
 
     ping = time.time()
     await event._client(functions.PingRequest(0))
