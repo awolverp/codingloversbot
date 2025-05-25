@@ -251,10 +251,10 @@ class OnCommand(OnNewMessage):
 
         if _entity_command and (_entity_command[0] != event._client.me.username):
             return
-        
+
         if self.admin_required and not is_admin(event.message.sender_id):
             return
-        
+
         if is_spam(event.message.sender_id):
             return
 

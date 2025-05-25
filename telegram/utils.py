@@ -158,7 +158,7 @@ async def _resolve_user_id(
     if not intext_allowed:
         return 0, False
 
-    first_offset = message.message.find(" ")+1
+    first_offset = message.message.find(" ") + 1
 
     if first_offset == 0:
         return 0, False
@@ -167,15 +167,15 @@ async def _resolve_user_id(
         if isinstance(entity, types.MessageEntityMention):
             if first_offset != entity.offset:
                 return 0, False
-            
-            return message.message[entity.offset:entity.offset+entity.length], False
+
+            return message.message[entity.offset : entity.offset + entity.length], False
 
         if isinstance(entity, types.MessageEntityMentionName):
             if first_offset != entity.offset:
                 return 0, False
-            
+
             return entity.user_id, False
-    
+
     try:
         tg = message.message.split(" ")[1]
     except IndexError:
