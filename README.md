@@ -22,7 +22,7 @@ git clone https://github.com/awolverp/codingloversbot
 rm -rf .git
 ```
 
-2. On second step, you have to customize the settings. Rename the `settings-sample.yml` to `settinsg.yml` and then edit it.
+2. On second step, you have to customize the settings. Rename the `settings-sample.yml` to `settings.yml` and then edit it.
 
 3. Now we have two ways for running the bot.
 
