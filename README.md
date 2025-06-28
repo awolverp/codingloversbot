@@ -5,10 +5,6 @@
     <em>A Simple Group Manager | Designed for t.me/CodingLovers_GP</em>
 </p>
 
-> [!WARNING]\
-> This bot is in testing process and not completely tested.
-
-
 ## Demo
 The bot is running on t.me/CodingLoversRoBot.
 
