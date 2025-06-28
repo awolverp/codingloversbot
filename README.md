@@ -6,7 +6,7 @@
 </p>
 
 ## Demo
-The bot is running on t.me/CodingLoversRoBot.
+The bot is running on [CodingLoversRoBot](https://t.me/CodingLoversRoBot).
 
 ## Features
 - Useful user management operations such as mute, ban, etc.
